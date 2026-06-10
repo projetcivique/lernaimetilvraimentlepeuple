@@ -1,0 +1,16 @@
+# Base de données
+db/*.sqlite3
+db/*.db
+
+# Logs
+*.log
+log/
+
+# Gems installées localement
+vendor/bundle/
+
+# Variables d'environnement
+.env
+
+# Fichiers système
+.DS_Store
