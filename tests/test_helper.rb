@@ -1,10 +1,11 @@
 require 'minitest/autorun'
 require 'sequel'
+require 'json'
 
-# Base de données en mémoire pour les tests
-# Disparaît à chaque fin de session — aucun risque de polluer les vraies données
 DB = Sequel.sqlite
 
-# Charge le schéma dans cette base de test
 require_relative '../db/schema'
 create_schema(DB)
+
+require_relative '../models/scrutin'
+require_relative '../models/vote_groupe'

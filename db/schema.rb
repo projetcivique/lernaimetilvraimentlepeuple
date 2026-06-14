@@ -3,13 +3,18 @@ require 'sequel'
 def create_schema(db)
   db.create_table?(:scrutins) do
     primary_key :id
-    String  :source,       null: false  # "assemblee" | "senat" | "europarl"
-    String  :titre,        null: false
-    String  :description,  text: true
-    Date    :date,         null: false
-    String  :categorie                  # "social" | "immigration" | "economique"...
-    String  :url_officielle
-    DateTime :created_at,  default: Sequel::CURRENT_TIMESTAMP
+    String   :source,             null: false
+    String   :reference_externe
+    Integer  :legislature
+    String   :titre,              null: false
+    String   :description,        text: true
+    Date     :date,               null: false
+    String   :categorie
+    String   :sort_code                        # "adopté" | "rejeté"
+    String   :type_vote                        # "amendement" | "loi_projet" | etc.
+    String   :url_officielle
+    DateTime :created_at,         default: Sequel::CURRENT_TIMESTAMP
+    unique [:source, :reference_externe]
   end
 
   db.create_table?(:votes_groupe) do
@@ -19,6 +24,6 @@ def create_schema(db)
     Integer :contre,       default: 0
     Integer :abstentions,  default: 0
     Integer :absents,      default: 0
-    String  :position      # "pour" | "contre" | "abstention" | "divise"
+    String  :position
   end
 end
