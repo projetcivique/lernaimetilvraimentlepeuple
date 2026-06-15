@@ -1,0 +1,42 @@
+<div class="scrutin-detail">
+  <div class="detail-header">
+    <a href="/scrutins" class="retour">← Retour à la liste</a>
+    <p class="detail-meta">
+      <%= s_source = { 'assemblee' => 'Assemblée nationale', 'senat' => 'Sénat', 'europarl' => 'Parlement européen' }[@scrutin.source] || @scrutin.source %>
+      · <%= @scrutin.date&.strftime('%d %B %Y') %>
+      · Résultat officiel : <strong><%= @scrutin.sort_code %></strong>
+    </p>
+    <h1 class="detail-titre"><%= @scrutin.titre %></h1>
+  </div>
+
+  <% if @vote %>
+    <div class="detail-position <%= @vote.position %>">
+      Le RN a voté : <%= @vote.position&.upcase %>
+    </div>
+
+    <div class="detail-chiffres">
+      <div class="chiffre">
+        <span class="nb"><%= @vote.pour %></span>
+        <span class="lbl">Pour</span>
+      </div>
+      <div class="chiffre">
+        <span class="nb"><%= @vote.contre %></span>
+        <span class="lbl">Contre</span>
+      </div>
+      <div class="chiffre">
+        <span class="nb"><%= @vote.abstentions %></span>
+        <span class="lbl">Abstentions</span>
+      </div>
+      <div class="chiffre">
+        <span class="nb"><%= @vote.absents %></span>
+        <span class="lbl">Non-votants</span>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @scrutin.url_officielle %>
+    <a href="<%= @scrutin.url_officielle %>" target="_blank" class="source-link">
+      Voir la source officielle →
+    </a>
+  <% end %>
+</div>

@@ -1,0 +1,38 @@
+<section class="stats">
+  <div class="stat">
+    <span class="stat-number"><%= @total %></span>
+    <span class="stat-label">scrutins analysés</span>
+  </div>
+  <div class="stat pour">
+    <span class="stat-number"><%= @par_position['pour'] || 0 %></span>
+    <span class="stat-label">fois POUR</span>
+  </div>
+  <div class="stat contre">
+    <span class="stat-number"><%= @par_position['contre'] || 0 %></span>
+    <span class="stat-label">fois CONTRE</span>
+  </div>
+  <div class="stat abstention">
+    <span class="stat-number"><%= @par_position['abstention'] || 0 %></span>
+    <span class="stat-label">fois ABSTENTION</span>
+  </div>
+</section>
+
+<section class="derniers">
+  <h2>Derniers votes du RN</h2>
+
+  <% if @derniers.empty? %>
+    <p class="vide">Aucun scrutin importé pour l'instant.</p>
+  <% else %>
+    <% @derniers.each do |s| %>
+      <div class="scrutin-card">
+        <a href="/scrutins/<%= s[:reference_externe] %>">
+          <span class="position position-<%= s[:position] %>"><%= s[:position]&.upcase %></span>
+          <span class="titre"><%= s[:titre] %></span>
+          <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
+        </a>
+      </div>
+    <% end %>
+  <% end %>
+
+  <a href="/scrutins" class="voir-tout">Voir tous les votes →</a>
+</section>

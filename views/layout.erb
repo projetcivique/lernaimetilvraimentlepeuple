@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le RN aime-t-il vraiment le peuple ?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <a href="/" class="site-title">Le RN aime-t-il vraiment le peuple&nbsp;?</a>
+    <nav>
+      <a href="/scrutins">Tous les votes</a>
+      <a href="/scrutins?source=assemblee">Assemblée nationale</a>
+      <a href="/scrutins?source=senat">Sénat</a>
+      <a href="/scrutins?source=europarl">Parlement européen</a>
+    </nav>
+  </header>
+
+  <main>
+    <%= yield %>
+  </main>
+
+  <footer>
+    <p>
+      Données issues de <a href="https://www.civix.fr" target="_blank">CIVIX.fr</a>
+      (Assemblée nationale open data) —
+      <a href="https://github.com/projetcivique/lernaimetilvraimentlepeuple" target="_blank">Code source</a>
+    </p>
+  </footer>
+</body>
+</html>

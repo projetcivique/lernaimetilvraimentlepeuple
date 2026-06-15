@@ -1,0 +1,52 @@
+<h1>Votes du RN <span class="total">(<%= @total %> scrutins)</span></h1>
+
+<form class="filtres" method="get" action="/scrutins">
+  <select name="source" onchange="this.form.submit()">
+    <option value="">Toutes les chambres</option>
+    <option value="assemblee"  <%= 'selected' if params[:source]   == 'assemblee' %>>Assemblée nationale</option>
+    <option value="senat"      <%= 'selected' if params[:source]   == 'senat' %>>Sénat</option>
+    <option value="europarl"   <%= 'selected' if params[:source]   == 'europarl' %>>Parlement européen</option>
+  </select>
+
+  <select name="position" onchange="this.form.submit()">
+    <option value="">Toutes les positions</option>
+    <option value="pour"        <%= 'selected' if params[:position] == 'pour' %>>Pour</option>
+    <option value="contre"      <%= 'selected' if params[:position] == 'contre' %>>Contre</option>
+    <option value="abstention"  <%= 'selected' if params[:position] == 'abstention' %>>Abstention</option>
+    <option value="divise"      <%= 'selected' if params[:position] == 'divise' %>>Divisé</option>
+  </select>
+
+  <select name="sort" onchange="this.form.submit()">
+    <option value="">Tous les résultats</option>
+    <option value="adopté"  <%= 'selected' if params[:sort] == 'adopté' %>>Adopté</option>
+    <option value="rejeté"  <%= 'selected' if params[:sort] == 'rejeté' %>>Rejeté</option>
+  </select>
+</form>
+
+<% if @scrutins.empty? %>
+  <p class="vide">Aucun scrutin ne correspond à ces critères.</p>
+<% else %>
+  <% @scrutins.each do |s| %>
+    <div class="scrutin-card">
+      <a href="/scrutins/<%= s[:reference_externe] %>">
+        <span class="position position-<%= s[:position] %>"><%= s[:position]&.upcase %></span>
+        <span class="titre"><%= s[:titre] %></span>
+        <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
+      </a>
+    </div>
+  <% end %>
+
+  <% if @pages > 1 %>
+    <nav class="pagination">
+      <% if @page > 1 %>
+        <a href="?<%= Rack::Utils.build_query(params.merge('page' => @page - 1)) %>">← Précédent</a>
+      <% end %>
+
+      <span class="active">Page <%= @page %> / <%= @pages %></span>
+
+      <% if @page < @pages %>
+        <a href="?<%= Rack::Utils.build_query(params.merge('page' => @page + 1)) %>">Suivant →</a>
+      <% end %>
+    </nav>
+  <% end %>
+<% end %>
