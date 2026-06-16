@@ -29,15 +29,22 @@
 
   <select name="sort" onchange="this.form.submit()">
     <option value="">Tous les résultats</option>
-    <option value="adopté"  <%= 'selected' if params[:sort]      == 'adopté' %>>Adopté</option>
-    <option value="rejeté"  <%= 'selected' if params[:sort]      == 'rejeté' %>>Rejeté</option>
+    <option value="adopté"  <%= 'selected' if params[:sort] == 'adopté' %>>Adopté</option>
+    <option value="rejeté"  <%= 'selected' if params[:sort] == 'rejeté' %>>Rejeté</option>
   </select>
 
   <label class="filtre-peuple">
     <input type="checkbox" name="peuple" value="1"
            onchange="this.form.submit()"
            <%= 'checked' if params[:peuple] == '1' %>>
-    Contre le peuple uniquement
+    Contre le peuple
+  </label>
+
+  <label class="filtre-peuple">
+    <input type="checkbox" name="tout" value="1"
+           onchange="this.form.submit()"
+           <%= 'checked' if params[:tout] == '1' %>>
+    Inclure les amendements
   </label>
 </form>
 
@@ -45,16 +52,7 @@
   <p class="vide">Aucun scrutin ne correspond à ces critères.</p>
 <% else %>
   <% @scrutins.each do |s| %>
-    <div class="scrutin-card">
-      <a href="/scrutins/<%= s[:reference_externe] %>">
-        <span class="position position-<%= s[:position] %>"><%= s[:position]&.upcase %></span>
-        <% if s[:categorie] %>
-          <span class="badge-categorie badge-<%= s[:categorie] %>"><%= s[:categorie]&.upcase %></span>
-        <% end %>
-        <span class="titre"><%= s[:titre] %></span>
-        <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
-      </a>
-    </div>
+    <%= erb :_carte, locals: { scrutin: s } %>
   <% end %>
 
   <% if @pages > 1 %>

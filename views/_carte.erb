@@ -1,0 +1,23 @@
+<div class="scrutin-card card-<%= scrutin[:position] %>">
+  <a href="/scrutins/<%= scrutin[:reference_externe] %>">
+    <div class="card-header">
+      <span class="position position-<%= scrutin[:position] %>">
+        <%= scrutin[:position]&.upcase %>
+      </span>
+      <span class="card-date"><%= scrutin[:date]&.strftime('%d/%m/%Y') %></span>
+    </div>
+    <div class="card-titre"><%= scrutin[:titre] %></div>
+    <div class="card-meta">
+      <% if scrutin[:categorie] %>
+        <span class="badge-categorie badge-<%= scrutin[:categorie] %>">
+          <%= scrutin[:categorie]&.upcase %>
+        </span>
+      <% end %>
+      <span class="card-chiffres">
+        <%= scrutin[:pour] %> pour
+        · <%= scrutin[:contre] %> contre
+        · <%= scrutin[:abstentions] %> abstentions
+      </span>
+    </div>
+  </a>
+</div>

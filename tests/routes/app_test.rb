@@ -12,7 +12,7 @@ class AppTest < Minitest::Test
   def setup
     DB[:votes_groupe].delete
     DB[:scrutins].delete
-    header 'Host', 'localhost'   # ← Sinatra 4.x bloque example.org (défaut rack-test)
+    header 'Host', 'localhost'
   end
 
   def test_homepage_repond_200
@@ -44,7 +44,8 @@ class AppTest < Minitest::Test
   def test_scrutin_detail_repond_200
     scrutin = Scrutin.create(
       source: 'assemblee', reference_externe: 'TEST001',
-      titre: 'Scrutin de test', date: Date.new(2024, 1, 15), legislature: 17
+      titre: 'Scrutin de test', date: Date.new(2024, 1, 15),
+      legislature: 17, type_vote: 'texte'
     )
     VoteGroupe.create(
       scrutin_id: scrutin.id, pour: 100, contre: 5,
@@ -58,9 +59,11 @@ class AppTest < Minitest::Test
 
   def test_filtre_par_position
     s1 = Scrutin.create(source: 'assemblee', reference_externe: 'A001',
-                        titre: 'Vote A', date: Date.today, legislature: 17)
+                        titre: 'Vote A', date: Date.today,
+                        legislature: 17, type_vote: 'texte')
     s2 = Scrutin.create(source: 'assemblee', reference_externe: 'A002',
-                        titre: 'Vote B', date: Date.today, legislature: 17)
+                        titre: 'Vote B', date: Date.today,
+                        legislature: 17, type_vote: 'texte')
     VoteGroupe.create(scrutin_id: s1.id, pour: 100, contre: 0,
                       abstentions: 0, absents: 0, position: 'pour')
     VoteGroupe.create(scrutin_id: s2.id, pour: 0, contre: 100,
@@ -70,5 +73,33 @@ class AppTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_includes last_response.body, 'Vote A'
     refute_includes last_response.body, 'Vote B'
+  end
+
+  def test_amendements_exclus_par_defaut
+    s1 = Scrutin.create(source: 'assemblee', reference_externe: 'B001',
+                        titre: 'Loi importante', date: Date.today,
+                        legislature: 17, type_vote: 'texte')
+    s2 = Scrutin.create(source: 'assemblee', reference_externe: 'B002',
+                        titre: 'Amendement obscur', date: Date.today,
+                        legislature: 17, type_vote: 'amendement')
+    VoteGroupe.create(scrutin_id: s1.id, pour: 100, contre: 0,
+                      abstentions: 0, absents: 0, position: 'pour')
+    VoteGroupe.create(scrutin_id: s2.id, pour: 100, contre: 0,
+                      abstentions: 0, absents: 0, position: 'pour')
+
+    get '/scrutins'
+    assert_includes last_response.body,    'Loi importante'
+    refute_includes last_response.body,    'Amendement obscur'
+  end
+
+  def test_amendements_visibles_avec_filtre_tout
+    s = Scrutin.create(source: 'assemblee', reference_externe: 'C001',
+                       titre: 'Amendement obscur', date: Date.today,
+                       legislature: 17, type_vote: 'amendement')
+    VoteGroupe.create(scrutin_id: s.id, pour: 100, contre: 0,
+                      abstentions: 0, absents: 0, position: 'pour')
+
+    get '/scrutins?tout=1'
+    assert_includes last_response.body, 'Amendement obscur'
   end
 end

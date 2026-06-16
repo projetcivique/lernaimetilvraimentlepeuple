@@ -11,12 +11,15 @@ class App < Sinatra::Base
   set :views,         File.join(__dir__, 'views')
   set :public_folder, File.join(__dir__, 'public')
 
+  # Types affichés par défaut (hors amendements)
+  TYPES_VISIBLES = %w[texte article scrutin motion_censure].freeze
+
   configure :development do
     require 'sinatra/reloader'
     register Sinatra::Reloader
   end
 
-  # ── Condition SQL réutilisable "contre le peuple" ─────────────────────────
+  # ── Condition SQL "contre le peuple" ─────────────────────────────────────
   def self.condition_contre_peuple
     categories_contre = Scrutin::MAUVAISE_POSITION.select { |_, v| v == 'contre' }.keys
     categories_pour   = Scrutin::MAUVAISE_POSITION.select { |_, v| v == 'pour'   }.keys
@@ -34,9 +37,22 @@ class App < Sinatra::Base
         categories_pour
       )
     end
-
     conditions.reduce { |a, b| Sequel.|(a, b) }
   end
+
+  # ── Colonnes communes pour les cartes ────────────────────────────────────
+  COLONNES_CARTE = [
+    Sequel[:scrutins][:reference_externe],
+    Sequel[:scrutins][:titre],
+    Sequel[:scrutins][:date],
+    Sequel[:scrutins][:categorie],
+    Sequel[:scrutins][:type_vote],
+    Sequel[:votes_groupe][:position],
+    Sequel[:votes_groupe][:pour],
+    Sequel[:votes_groupe][:contre],
+    Sequel[:votes_groupe][:abstentions],
+    Sequel[:votes_groupe][:absents]
+  ].freeze
 
   # ── Page d'accueil ────────────────────────────────────────────────────────
   get '/' do
@@ -50,21 +66,14 @@ class App < Sinatra::Base
 
     base = DB[:scrutins]
       .join(:votes_groupe, scrutin_id: Sequel[:scrutins][:id])
-      .select(
-        Sequel[:scrutins][:reference_externe],
-        Sequel[:scrutins][:titre],
-        Sequel[:scrutins][:date],
-        Sequel[:scrutins][:categorie],
-        Sequel[:votes_groupe][:position]
-      )
+      .where(Sequel[:scrutins][:type_vote] => TYPES_VISIBLES)
+      .select(*COLONNES_CARTE)
 
-    # 10 derniers scrutins, du plus récent au plus ancien
     @derniers = base
       .order(Sequel.desc(Sequel[:scrutins][:date]))
       .limit(10)
       .all
 
-    # Votes contre le peuple, du plus récent au plus ancien
     @contre_peuple = base
       .where(self.class.condition_contre_peuple)
       .order(Sequel.desc(Sequel[:scrutins][:date]))
@@ -78,19 +87,14 @@ class App < Sinatra::Base
   get '/scrutins' do
     dataset = DB[:scrutins]
       .join(:votes_groupe, scrutin_id: Sequel[:scrutins][:id])
-      .select(
-        Sequel[:scrutins][:reference_externe],
-        Sequel[:scrutins][:titre],
-        Sequel[:scrutins][:date],
-        Sequel[:scrutins][:source],
-        Sequel[:scrutins][:sort_code],
-        Sequel[:scrutins][:categorie],
-        Sequel[:votes_groupe][:position],
-        Sequel[:votes_groupe][:pour],
-        Sequel[:votes_groupe][:contre],
-        Sequel[:votes_groupe][:abstentions],
-        Sequel[:votes_groupe][:absents]
-      )
+      .select(*COLONNES_CARTE)
+
+    # Par défaut : exclure les amendements sauf si demandé explicitement
+    if params[:tout] == '1'
+      # Tous les types, y compris amendements
+    else
+      dataset = dataset.where(Sequel[:scrutins][:type_vote] => TYPES_VISIBLES)
+    end
 
     dataset = dataset.where(Sequel[:scrutins][:source]       => params[:source])    if params[:source]    && !params[:source].empty?
     dataset = dataset.where(Sequel[:votes_groupe][:position] => params[:position])  if params[:position]  && !params[:position].empty?

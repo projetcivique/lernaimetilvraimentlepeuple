@@ -21,16 +21,10 @@
   <section class="contre-peuple">
     <h2>Quand le RN vote contre le peuple</h2>
     <p class="section-desc">
-      Votes contre les mesures sociales, ou pour des avantages aux plus riches — du plus récent au plus ancien.
+      Votes contre les mesures sociales, ou pour des avantages aux plus riches.
     </p>
     <% @contre_peuple.each do |s| %>
-      <div class="scrutin-card scrutin-alerte">
-        <a href="/scrutins/<%= s[:reference_externe] %>">
-          <span class="badge-categorie badge-<%= s[:categorie] %>"><%= s[:categorie]&.upcase %></span>
-          <span class="titre"><%= s[:titre] %></span>
-          <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
-        </a>
-      </div>
+      <%= erb :_carte, locals: { scrutin: s } %>
     <% end %>
     <a href="/scrutins?peuple=1" class="voir-tout">Voir tous ces votes →</a>
   </section>
@@ -42,16 +36,7 @@
     <p class="vide">Aucun scrutin importé pour l'instant.</p>
   <% else %>
     <% @derniers.each do |s| %>
-      <div class="scrutin-card">
-        <a href="/scrutins/<%= s[:reference_externe] %>">
-          <span class="position position-<%= s[:position] %>"><%= s[:position]&.upcase %></span>
-          <% if s[:categorie] %>
-            <span class="badge-categorie badge-<%= s[:categorie] %>"><%= s[:categorie]&.upcase %></span>
-          <% end %>
-          <span class="titre"><%= s[:titre] %></span>
-          <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
-        </a>
-      </div>
+      <%= erb :_carte, locals: { scrutin: s } %>
     <% end %>
   <% end %>
   <a href="/scrutins" class="voir-tout">Voir tous les votes →</a>

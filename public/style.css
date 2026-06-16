@@ -74,19 +74,56 @@ h2 { font-size: 1.1rem; margin-bottom: 1rem; }
 .stat.abstention  .stat-number { color: var(--abstention); }
 
 /* ── SCRUTIN CARD ───────────────────────────────── */
+.scrutin-card {
+  border-left: 4px solid var(--border);
+  margin-bottom: 0.25rem;
+  transition: border-color 0.15s;
+}
+
+.scrutin-card.card-pour        { border-left-color: var(--pour); }
+.scrutin-card.card-contre      { border-left-color: var(--contre); }
+.scrutin-card.card-abstention  { border-left-color: var(--abstention); }
+.scrutin-card.card-divise      { border-left-color: var(--divise); }
+
 .scrutin-card a {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.875rem 0;
+  display: block;
+  padding: 0.875rem 0.875rem 0.875rem 1rem;
   border-bottom: 1px solid var(--border);
 }
 
-.scrutin-card a:hover .titre { text-decoration: underline; }
+.scrutin-card a:hover { background: #f9fafb; }
 
-.titre { font-size: 0.875rem; }
-.date  { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.card-date {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.card-titre {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-chiffres {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
 
 /* ── BADGES POSITION ────────────────────────────── */
 .position {
@@ -264,3 +301,58 @@ footer a { color: var(--text-light); text-decoration: underline; }
 }
 
 .filtre-peuple input { cursor: pointer; }
+
+/* ── CONTRE LE PEUPLE ───────────────────────────── */
+.contre-peuple {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.contre-peuple h2  { color: var(--contre); margin-bottom: 0.25rem; }
+.section-desc      { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem; }
+
+/* ── BADGES CATÉGORIE ───────────────────────────── */
+.badge-categorie {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.badge-social    { background: #dbeafe; color: #1e40af; }
+.badge-sante     { background: #d1fae5; color: #065f46; }
+.badge-travail   { background: #fef3c7; color: #92400e; }
+.badge-logement  { background: #ede9fe; color: #4c1d95; }
+.badge-education { background: #fce7f3; color: #9d174d; }
+.badge-retraite  { background: #e0f2fe; color: #075985; }
+.badge-riches    { background: #fef9c3; color: #713f12; }
+
+/* ── FILTRE PEUPLE ──────────────────────────────── */
+.filtre-peuple {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--contre);
+  border-radius: 4px;
+  color: var(--contre);
+}
+
+.filtre-peuple input { cursor: pointer; }
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 600px) {
+  header { padding: 1rem; }
+  main   { padding: 1rem; }
+  .card-chiffres { display: none; }
+  .detail-chiffres { grid-template-columns: repeat(2, 1fr); }
+  .detail-position { font-size: 1.4rem; }
+}
