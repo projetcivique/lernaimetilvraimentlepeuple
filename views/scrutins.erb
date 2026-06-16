@@ -3,24 +3,42 @@
 <form class="filtres" method="get" action="/scrutins">
   <select name="source" onchange="this.form.submit()">
     <option value="">Toutes les chambres</option>
-    <option value="assemblee"  <%= 'selected' if params[:source]   == 'assemblee' %>>Assemblée nationale</option>
-    <option value="senat"      <%= 'selected' if params[:source]   == 'senat' %>>Sénat</option>
-    <option value="europarl"   <%= 'selected' if params[:source]   == 'europarl' %>>Parlement européen</option>
+    <option value="assemblee" <%= 'selected' if params[:source]    == 'assemblee' %>>Assemblée nationale</option>
+    <option value="senat"     <%= 'selected' if params[:source]    == 'senat' %>>Sénat</option>
+    <option value="europarl"  <%= 'selected' if params[:source]    == 'europarl' %>>Parlement européen</option>
   </select>
 
   <select name="position" onchange="this.form.submit()">
     <option value="">Toutes les positions</option>
-    <option value="pour"        <%= 'selected' if params[:position] == 'pour' %>>Pour</option>
-    <option value="contre"      <%= 'selected' if params[:position] == 'contre' %>>Contre</option>
-    <option value="abstention"  <%= 'selected' if params[:position] == 'abstention' %>>Abstention</option>
-    <option value="divise"      <%= 'selected' if params[:position] == 'divise' %>>Divisé</option>
+    <option value="pour"       <%= 'selected' if params[:position]  == 'pour' %>>Pour</option>
+    <option value="contre"     <%= 'selected' if params[:position]  == 'contre' %>>Contre</option>
+    <option value="abstention" <%= 'selected' if params[:position]  == 'abstention' %>>Abstention</option>
+    <option value="divise"     <%= 'selected' if params[:position]  == 'divise' %>>Divisé</option>
+  </select>
+
+  <select name="categorie" onchange="this.form.submit()">
+    <option value="">Toutes les catégories</option>
+    <option value="social"    <%= 'selected' if params[:categorie] == 'social' %>>Social</option>
+    <option value="sante"     <%= 'selected' if params[:categorie] == 'sante' %>>Santé</option>
+    <option value="travail"   <%= 'selected' if params[:categorie] == 'travail' %>>Travail</option>
+    <option value="logement"  <%= 'selected' if params[:categorie] == 'logement' %>>Logement</option>
+    <option value="education" <%= 'selected' if params[:categorie] == 'education' %>>Éducation</option>
+    <option value="retraite"  <%= 'selected' if params[:categorie] == 'retraite' %>>Retraite</option>
+    <option value="riches"    <%= 'selected' if params[:categorie] == 'riches' %>>Avantages aux riches</option>
   </select>
 
   <select name="sort" onchange="this.form.submit()">
     <option value="">Tous les résultats</option>
-    <option value="adopté"  <%= 'selected' if params[:sort] == 'adopté' %>>Adopté</option>
-    <option value="rejeté"  <%= 'selected' if params[:sort] == 'rejeté' %>>Rejeté</option>
+    <option value="adopté"  <%= 'selected' if params[:sort]      == 'adopté' %>>Adopté</option>
+    <option value="rejeté"  <%= 'selected' if params[:sort]      == 'rejeté' %>>Rejeté</option>
   </select>
+
+  <label class="filtre-peuple">
+    <input type="checkbox" name="peuple" value="1"
+           onchange="this.form.submit()"
+           <%= 'checked' if params[:peuple] == '1' %>>
+    Contre le peuple uniquement
+  </label>
 </form>
 
 <% if @scrutins.empty? %>
@@ -30,6 +48,9 @@
     <div class="scrutin-card">
       <a href="/scrutins/<%= s[:reference_externe] %>">
         <span class="position position-<%= s[:position] %>"><%= s[:position]&.upcase %></span>
+        <% if s[:categorie] %>
+          <span class="badge-categorie badge-<%= s[:categorie] %>"><%= s[:categorie]&.upcase %></span>
+        <% end %>
         <span class="titre"><%= s[:titre] %></span>
         <span class="date"><%= s[:date]&.strftime('%d/%m/%Y') %></span>
       </a>
@@ -41,9 +62,7 @@
       <% if @page > 1 %>
         <a href="?<%= Rack::Utils.build_query(params.merge('page' => @page - 1)) %>">← Précédent</a>
       <% end %>
-
       <span class="active">Page <%= @page %> / <%= @pages %></span>
-
       <% if @page < @pages %>
         <a href="?<%= Rack::Utils.build_query(params.merge('page' => @page + 1)) %>">Suivant →</a>
       <% end %>

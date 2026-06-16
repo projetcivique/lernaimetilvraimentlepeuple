@@ -7,9 +7,6 @@ class AssembleeNationaleImporter < BaseImporter
   PAGE_SIZE   = 100
   SLEEP_SEC   = 0.3
 
-  # ← MODIFIÉ : import accepte maintenant un paramètre optionnel "since"
-  #   since: nil   → import complet (premier lancement)
-  #   since: Date  → import uniquement depuis cette date (cron quotidien)
   def import(since: nil)
     @since = since
     page   = 1
@@ -20,8 +17,6 @@ class AssembleeNationaleImporter < BaseImporter
       scrutins = data.dig('data', 'results') || []
       break if scrutins.empty?
 
-      # ← AJOUTÉ : si on a une date limite, on filtre et on arrête
-      #   dès qu'on tombe sur des scrutins trop anciens
       if @since
         scrutins = scrutins.select { |s| Date.parse(s['date_scrutin']) >= @since }
         break if scrutins.empty?
@@ -43,7 +38,6 @@ class AssembleeNationaleImporter < BaseImporter
     puts "\nAssemblée Nationale : #{count} scrutins traités"
   end
 
-  # Inchangé
   def import_scrutin(scrutin_data, detail_data)
     groups = detail_data.dig('data', 'attributes', 'results_by_group') || []
     rn     = groups.find { |g| g['groupe_uid'] == GROUPE_RN }
@@ -62,6 +56,7 @@ class AssembleeNationaleImporter < BaseImporter
         titre:             scrutin_data['titre'],
         sort_code:         scrutin_data['sort_code'],
         type_vote:         scrutin_data['type'],
+        categorie:         categoriser(scrutin_data['titre']),  # hérité de BaseImporter
         date:              Date.parse(scrutin_data['date_scrutin']),
         url_officielle:    "https://www.civix.fr/votes/#{scrutin_data['uid']}"
       },
@@ -77,7 +72,6 @@ class AssembleeNationaleImporter < BaseImporter
 
   private
 
-  # Inchangé
   def fetch_list(page: 1)
     resp = HTTParty.get("#{API_BASE}/scrutins", query: {
       legislature: LEGISLATURE,
@@ -87,7 +81,6 @@ class AssembleeNationaleImporter < BaseImporter
     JSON.parse(resp.body)
   end
 
-  # Inchangé
   def fetch_detail(uid)
     resp = HTTParty.get("#{API_BASE}/scrutins/#{uid}")
     JSON.parse(resp.body)

@@ -56,4 +56,36 @@ class ScrutinTest < Minitest::Test
     assert_equal 95, scrutin.vote.total_votants   # 80+12+3
   end
 
+  def test_contre_peuple_contre_sur_social
+    scrutin = Scrutin.create(source: 'assemblee', titre: 'Test',
+                            date: Date.today, categorie: 'social')
+    VoteGroupe.create(scrutin_id: scrutin.id, pour: 5, contre: 100,
+                      abstentions: 0, absents: 0, position: 'contre')
+    assert scrutin.contre_peuple?
+  end
+
+  def test_contre_peuple_pour_sur_riches
+    scrutin = Scrutin.create(source: 'assemblee', titre: 'Test',
+                            date: Date.today, categorie: 'riches')
+    VoteGroupe.create(scrutin_id: scrutin.id, pour: 100, contre: 5,
+                      abstentions: 0, absents: 0, position: 'pour')
+    assert scrutin.contre_peuple?
+  end
+
+  def test_contre_peuple_faux_si_pour_sur_social
+    scrutin = Scrutin.create(source: 'assemblee', titre: 'Test',
+                            date: Date.today, categorie: 'social')
+    VoteGroupe.create(scrutin_id: scrutin.id, pour: 100, contre: 5,
+                      abstentions: 0, absents: 0, position: 'pour')
+    refute scrutin.contre_peuple?
+  end
+
+  def test_contre_peuple_faux_si_categorie_nulle
+    scrutin = Scrutin.create(source: 'assemblee', titre: 'Test',
+                            date: Date.today, categorie: nil)
+    VoteGroupe.create(scrutin_id: scrutin.id, pour: 5, contre: 100,
+                      abstentions: 0, absents: 0, position: 'contre')
+    refute scrutin.contre_peuple?
+  end
+
 end

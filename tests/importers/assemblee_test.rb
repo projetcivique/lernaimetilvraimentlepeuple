@@ -95,4 +95,24 @@ class AssembleeNationaleImporterTest < Minitest::Test
     @importer.import_scrutin(SCRUTIN_BASE, DETAIL_RN_POUR)
     assert_equal 'https://www.civix.fr/votes/VTANR5L17V0123', Scrutin.first.url_officielle
   end
+
+  def test_categorise_social
+    assert_equal 'social', @importer.categoriser('amendement sur le RSA et les minima sociaux')
+  end
+
+  def test_categorise_sante
+    assert_equal 'sante', @importer.categoriser('financement des hôpitaux publics')
+  end
+
+  def test_categorise_retraite
+    assert_equal 'retraite', @importer.categoriser('réforme des retraites — article 7')
+  end
+
+  def test_categorise_riches
+    assert_equal 'riches', @importer.categoriser('suppression de l\'ISF et flat tax')
+  end
+
+  def test_categorise_nil_si_aucun_match
+    assert_nil @importer.categoriser("accord avec la Communauté des Caraïbes")
+  end
 end

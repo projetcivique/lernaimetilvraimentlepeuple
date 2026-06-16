@@ -217,3 +217,50 @@ footer a { color: var(--text-light); text-decoration: underline; }
   .detail-chiffres { grid-template-columns: repeat(2, 1fr); }
   .detail-position { font-size: 1.4rem; }
 }
+
+/* ── CONTRE LE PEUPLE ───────────────────────────── */
+.contre-peuple {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.contre-peuple h2  { color: var(--contre); margin-bottom: 0.25rem; }
+.section-desc      { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem; }
+.scrutin-alerte a  { border-bottom-color: #fecaca; }
+
+/* ── BADGES CATÉGORIE ───────────────────────────── */
+.badge-categorie {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.badge-social    { background: #dbeafe; color: #1e40af; }
+.badge-sante     { background: #d1fae5; color: #065f46; }
+.badge-travail   { background: #fef3c7; color: #92400e; }
+.badge-logement  { background: #ede9fe; color: #4c1d95; }
+.badge-education { background: #fce7f3; color: #9d174d; }
+.badge-retraite  { background: #e0f2fe; color: #075985; }
+.badge-riches    { background: #fef9c3; color: #713f12; }
+
+/* ── FILTRE PEUPLE ──────────────────────────────── */
+.filtre-peuple {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--contre);
+  border-radius: 4px;
+  color: var(--contre);
+}
+
+.filtre-peuple input { cursor: pointer; }
